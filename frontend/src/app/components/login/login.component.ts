@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Check if already authenticated
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/putaway']);
       return;
     }
 
@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
           this.loginForm.enable();
           if (response.success) {
             // Success feedback handled by navigation
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/putaway']);
           } else {
             // Error will be shown inline in the form
             console.error('Login failed:', response.message);

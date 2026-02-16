@@ -1295,6 +1295,7 @@ impl PutawayDatabase {
     /// 3. Deletes source LotMaster if QtyOnHand becomes 0
     /// 4. Creates or updates destination LotMaster with transferred quantities
     /// 5. Destination gets both QtyOnHand AND QtyCommitSales from the transfer (committed stock moves with commitment)
+    #[allow(clippy::too_many_arguments)]
     pub async fn execute_committed_bin_transfer(
         &self,
         lot_no: &str,

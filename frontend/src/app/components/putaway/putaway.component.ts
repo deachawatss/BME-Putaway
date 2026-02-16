@@ -74,12 +74,12 @@ interface PutawayRequest {
                 <span class="tw-text-2xl sm:tw-text-3xl">📦</span>
                 <span class="tw-tracking-wide">Putaways</span>
               </h2>
-              <button 
+              <button
                 type="button"
                 (click)="goBack()"
-                class="tw-bg-white/20 hover:tw-bg-white/30 tw-text-white tw-p-2 tw-rounded-lg tw-transition-all tw-duration-200 hover:tw-scale-105"
-                aria-label="Close putaway dialog">
-                ✕
+                class="tw-bg-red-600 hover:tw-bg-red-700 tw-text-white tw-px-6 tw-py-2 tw-rounded-lg tw-text-sm tw-font-semibold tw-transition-all tw-duration-200 hover:tw-scale-105"
+                aria-label="Sign out">
+                Sign Out
               </button>
             </div>
           </div>
@@ -1005,9 +1005,10 @@ export class PutawayComponent implements AfterViewInit {
     }
   }
 
-  // Navigate back to dashboard
+  // Sign out and return to login
   goBack() {
-    this.router.navigate(['/dashboard']);
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   // Search button handlers

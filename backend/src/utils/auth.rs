@@ -53,7 +53,7 @@ impl AuthService {
         let token_duration_hours = env::var("JWT_DURATION_HOURS")
             .unwrap_or_else(|_| "8".to_string())
             .parse::<i64>()
-            .unwrap_or(8);
+            .unwrap_or(24);
 
         let token_duration = Duration::hours(token_duration_hours);
 

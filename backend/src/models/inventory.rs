@@ -35,6 +35,7 @@ impl InventoryAlert {
     /// Create a critical out of stock alert
     /// Only available during test compilation
     #[cfg(test)]
+    #[allow(dead_code)]
     pub fn out_of_stock(item_key: &str) -> Self {
         Self {
             alert_type: InventoryAlertType::OutOfStock,
