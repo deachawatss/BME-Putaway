@@ -6,12 +6,10 @@ use std::time::Duration;
 use tiberius::{AuthMethod, Config, EncryptionLevel, Query, Row};
 use tracing::{info, warn};
 
-pub mod bulk_runs;
-pub mod bulk_runs_intelligence;
 pub mod putaway;
 pub mod putaway_db;
 
-// Default warehouse location key for bulk operations
+// Default warehouse location key
 pub const DEFAULT_LOCATION_KEY: &str = "TFC1";
 
 /// Database configuration with connection pooling

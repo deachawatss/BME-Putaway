@@ -1,3 +1,2 @@
-// CLEAN HANDLER MODULE STRUCTURE - Only functional modules included
-pub mod bulk_runs;
+// CLEAN HANDLER MODULE STRUCTURE - Putaway only
 pub mod putaway;

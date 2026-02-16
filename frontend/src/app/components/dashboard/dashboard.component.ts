@@ -19,7 +19,7 @@ import { CardComponent, CardContentComponent } from '../../../lib/ui/card.compon
 export class DashboardComponent implements OnInit, OnDestroy {
   currentUser: User | null = null;
 
-  // Only 2 menu options as requested
+  // Putaway only menu option
   menuOptions = [
     {
       id: 'putaway',
@@ -29,15 +29,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       route: '/putaway',
       color: 'bg-gradient-to-br from-[#059669] to-[#047857]', // Green gradient
       hoverColor: 'hover:from-[#059669] hover:to-[#065f46]'
-    },
-    {
-      id: 'bulk-picking',
-      title: 'Bulk Picking',
-      subtitle: 'Manage bulk picking operations',
-      icon: '🗃️',
-      route: '/bulk-picking',
-      color: 'bg-gradient-to-br from-[#3C2415] to-[#2D1B10]', // Enhanced brown gradient
-      hoverColor: 'hover:from-[#3C2415] hover:to-[#1F120A]'
     }
   ];
 
