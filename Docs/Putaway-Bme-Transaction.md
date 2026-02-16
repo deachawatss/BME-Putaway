@@ -413,5 +413,121 @@ Available Qty = QtyOnHand - Qtycommitsales
 
 ---
 
+## Appendix A: Actual Database State Verification
+
+**Verification Date**: 2026-02-16 (after transfer completed)
+
+### Post-Transfer LotMaster State
+
+| Bin | QtyOnHand | Qtycommitsales | Available | LotStatus | RecUserId |
+|-----|-----------|----------------|-----------|-----------|-----------|
+| K0802-4B | 475 | 50 | 425 | C | WUTICHAI |
+| WHKON1 | 3850 | 0 | 3850 | B | DECHAWAT |
+
+**Observations**:
+- Source bin (K0802-4B): QtyOnHand decreased from 975 → 475 (exactly 500 transferred)
+- Source bin: Qtycommitsales back to 50 (temporary reservation was released)
+- Destination bin (WHKON1): QtyOnHand increased from 3350 → 3850 (received 500)
+- Destination RecDate shows transfer timestamp: 2026-02-16 14:08:42
+
+### LotTransaction Records (Processed)
+
+| LotTranNo | Type | BinNo | Qty | Processed | RecDate |
+|-----------|------|-------|-----|-----------|---------|
+| 18318700 | 9 (OUT) | K0802-4B | 500 | **Y** | 2026-02-16 14:08:42 |
+| 18318701 | 8 (IN) | WHKON1 | 500 | **Y** | 2026-02-16 14:08:42 |
+
+**Key Finding**: Transactions were inserted with `Processed='N'` but are now `Processed='Y'`, indicating batch job has processed them.
+
+### Pending Commitment Check
+
+Current commitment for source bin: **50** (only the Mfg. Issue, not the transfer)
+
+This confirms the transfer commitment was temporary — released after batch processing.
+
+### Unprocessed Transactions in System
+
+```
+Unprocessed Count: 2
+Total Negative Adjustments Pending: 550
+Total Positive Adjustments Pending: 550
+```
+
+There are still 2 transactions with `Processed='N'` in the system from today.
+
+---
+
+## Appendix B: Known Performance Issues ⚠️
+
+**CRITICAL**: The legacy BME Putaway system has severe performance problems that must be addressed in the new implementation.
+
+### Issues Identified
+
+| Issue | Symptom | Root Cause (Suspected) |
+|-------|---------|------------------------|
+| **Slow Transfers** | UI freezing during commit | Synchronous batch job execution |
+| **Freezing** | Application unresponsive | Table locking during LotMaster updates |
+| **Deadlocks** | Transaction rollback, retry required | Concurrent access to LotMaster/QCLotTransaction |
+
+### Why the Old System is Slow
+
+1. **Synchronous Processing**: Batch job appears to run inline during transfer commit
+2. **Table Scanning**: LotTransaction commitment queries scan large tables
+3. **No Pagination**: Validation queries return all bins without limits
+4. **Cursor Operations**: Heavy use of server-side cursors (sp_cursor)
+5. **Multiple Round-Trips**: 50+ SQL statements per transfer operation
+
+### Recommendations for New System
+
+| Area | Legacy Approach | Recommended Approach |
+|------|---------------|---------------------|
+| **Commitment Check** | Query both LotTransaction + QCLotTransaction | Single indexed query with UNION ALL |
+| **Batch Processing** | Synchronous (appears inline) | True async with queue/background worker |
+| **Inventory Update** | Via batch job | Direct update with transaction wrapper |
+| **Document Generation** | Cursor-based SeqNum update | Optimistic locking with retry |
+| **UI Feedback** | Blocking wait | Async with progress indicator |
+
+### Query Optimization Opportunities
+
+**Legacy (Slow)**:
+```sql
+-- Multiple separate queries for validation
+SELECT ... FROM LotTransaction WHERE ...
+SELECT ... FROM QCLotTransaction WHERE ...
+SELECT ... FROM DistributionParameter WHERE ...
+-- 50+ queries total
+```
+
+**Optimized**:
+```sql
+-- Single commitment query
+SELECT COALESCE(SUM(QtyIssued), 0)
+FROM (
+    SELECT QtyIssued FROM LotTransaction WHERE ... AND Processed IN ('N','P')
+    UNION ALL
+    SELECT QtyIssued FROM QCLotTransaction WHERE ... AND Processed IN ('N','P')
+) AS X;
+
+-- Direct inventory update (no batch job needed)
+BEGIN TRANSACTION;
+UPDATE LotMaster SET QtyOnHand -= 500 WHERE ...;  -- Source
+UPDATE LotMaster SET QtyOnHand += 500 WHERE ...;  -- Destination
+INSERT INTO LotTransaction ... ;  -- Audit only
+COMMIT;
+```
+
+### Concurrency Handling
+
+**Legacy**: Appears to rely on table locking (causing deadlocks)
+
+**New System Should**:
+1. Use row-level locking (`WITH (ROWLOCK, UPDLOCK)`)
+2. Implement optimistic concurrency (timestamp/version column)
+3. Queue concurrent transfers for same lot/bin
+4. Use connection pooling with timeout handling
+
+---
+
 *Documented by Gale Oracle for Putaway Bin Transfer System*
 *Source: SQL trace from legacy BME Putaway system (2026-02-16)*
+*Database Verification: 2026-02-16*
