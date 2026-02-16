@@ -16,7 +16,6 @@ use tower_http::services::ServeDir;
 use tracing::{debug, error, info, instrument, warn};
 
 // Security libraries
-use bcrypt;
 use governor::{DefaultKeyedRateLimiter, Quota, RateLimiter};
 use std::net::SocketAddr;
 use std::num::NonZeroU32;
@@ -289,11 +288,8 @@ async fn authenticate_ldap(
         .set_conn_timeout(Duration::from_secs(5));
 
     if config.skip_verify {
-        // SEC-008: LDAP skip_verify only allowed in development
-        if std::env::var("RUST_ENV").unwrap_or_default() != "development" {
-            return Err("LDAP_SKIP_VERIFY is only allowed in development environment".into());
-        }
-        tracing::warn!("⚠️ LDAP SSL certificate verification is DISABLED - development only!");
+        // SEC-008: LDAP skip_verify allowed for internal network deployments
+        tracing::warn!("⚠️ LDAP SSL certificate verification is DISABLED - internal network only!");
         settings = settings.set_no_tls_verify(true);
     }
 
@@ -673,7 +669,7 @@ async fn main() {
     // Default to LDAPS with skip_verify for internal networks
     // Most corporate LDAP servers use self-signed certificates
     let default_ldap_url = format!("ldaps://192.168.0.1:{}", constants::DEFAULT_LDAP_PORT);
-    let ldap_url = std::env::var("LDAP_URL").unwrap_or_else(|_| default_ldap_url);
+    let ldap_url = std::env::var("LDAP_URL").unwrap_or(default_ldap_url);
     let use_ssl = std::env::var("LDAP_USE_SSL")
         .unwrap_or_else(|_| "true".to_string())  // Default to SSL enabled
         .parse()

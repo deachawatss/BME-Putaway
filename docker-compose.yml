@@ -1,0 +1,110 @@
+# ============================================================
+# Putaway System - Docker Compose
+# Full stack deployment configuration
+# ============================================================
+
+services:
+  # --------------------------------------------------------
+  # Backend Service (Rust + Axum)
+  # --------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: putaway-backend
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      # Server
+      SERVER_HOST: ${SERVER_HOST}
+      SERVER_PORT: ${SERVER_PORT}
+      RUST_ENV: production
+      RUST_LOG: putaway_backend=info,tower_http=warn
+
+      # Database
+      DATABASE_SERVER: ${DATABASE_SERVER}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_MAX_CONNECTIONS: ${DATABASE_MAX_CONNECTIONS}
+
+      # LDAP
+      LDAP_URL: ${LDAP_URL}
+      LDAP_BASE_DN: ${LDAP_BASE_DN}
+      LDAP_DOMAIN: ${LDAP_DOMAIN}
+      LDAP_ENABLED: ${LDAP_ENABLED}
+      LDAP_SKIP_VERIFY: ${LDAP_SKIP_VERIFY}
+
+      # JWT
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_DURATION_HOURS: ${JWT_DURATION_HOURS}
+      JWT_ISSUER: ${JWT_ISSUER}
+
+      # CORS
+      CORS_ORIGINS: ${CORS_ORIGINS}
+
+      # Static assets
+      STATIC_ASSETS_PATH: /app/frontend/dist/frontend/browser
+    networks:
+      - putaway-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${SERVER_PORT}/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # --------------------------------------------------------
+  # Frontend Service (Angular + Node serve)
+  # --------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        API_BASE_URL: ${API_BASE_URL}
+        FRONTEND_PORT: ${FRONTEND_PORT}
+    container_name: putaway-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - putaway-network
+
+  # --------------------------------------------------------
+  # SQL Server (Optional - for local development)
+  # Uncomment to run SQL Server locally
+  # --------------------------------------------------------
+  # sqlserver:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   container_name: putaway-sqlserver
+  #   restart: unless-stopped
+  #   ports:
+  #     - "1433:1433"
+  #   environment:
+  #     ACCEPT_EULA: Y
+  #     SA_PASSWORD: ${DATABASE_PASSWORD}
+  #     MSSQL_PID: Express
+  #   volumes:
+  #     - sqlserver-data:/var/opt/mssql
+  #   networks:
+  #     - putaway-network
+
+# --------------------------------------------------------
+# Networks
+# --------------------------------------------------------
+networks:
+  putaway-network:
+    driver: bridge
+
+# --------------------------------------------------------
+# Volumes
+# --------------------------------------------------------
+volumes:
+  sqlserver-data:
+    driver: local

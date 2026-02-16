@@ -1,7 +1,7 @@
 {
-  "name": "NWFTH Warehouse Management System",
+  "name": "NWFTH Putaway Bin Transfer System",
   "short_name": "NWFTH Warehouse",
-  "description": "Newly Weds Foods (Thailand) Enterprise Warehouse Management System for bulk picking, inventory management, and warehouse operations",
+  "description": "Newly Weds Foods (Thailand) Enterprise Putaway Bin Transfer System for bulk picking, inventory management, and warehouse operations",
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",

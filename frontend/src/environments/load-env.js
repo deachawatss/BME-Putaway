@@ -6,8 +6,8 @@ const path = require('path');
 // Load dotenv
 const dotenv = require('dotenv');
 
-// Load .env file from frontend directory
-const envPath = path.resolve(__dirname, '../../.env');
+// Load .env file from project root (3 levels up from environments folder)
+const envPath = path.resolve(__dirname, '../../../.env');
 const result = dotenv.config({ path: envPath });
 
 if (result.error) {
@@ -15,20 +15,33 @@ if (result.error) {
 }
 
 // Environment variables with fallbacks
+const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:8080';
+const apiUrl = `${apiBaseUrl}/api`;
+
+// Extract host from API_BASE_URL or use DOCKER_HOST_IP
+const apiHostMatch = apiBaseUrl.match(/http:\/\/([^:]+):/);
+const apiHost = apiHostMatch ? apiHostMatch[1] : (process.env.DOCKER_HOST_IP || 'localhost');
+const frontendPort = process.env.FRONTEND_PORT || '4200';
+
 const envVars = {
-  API_URL: process.env.API_URL || 'http://localhost:4455/api',
+  API_URL: apiUrl,
+  API_BASE_URL: apiBaseUrl,
   FRONTEND_HOST: process.env.FRONTEND_HOST || '0.0.0.0',
-  FRONTEND_PORT: process.env.FRONTEND_PORT || '4200',
-  PRODUCTION: process.env.PRODUCTION || 'false',
-  DEBUG: process.env.DEBUG || 'false',
+  FRONTEND_PORT: frontendPort,
+  PRODUCTION: process.env.NG_ENVIRONMENT === 'production' ? 'true' : 'false',
+  DEBUG: process.env.ENABLE_DEBUG || 'false',
+  VERBOSE_LOGGING: process.env.VERBOSE_LOGGING || 'false',
+  DEFAULT_PAGE_SIZE: process.env.DEFAULT_PAGE_SIZE || '25',
+  APP_TITLE: process.env.APP_TITLE || 'Putaway System',
+  COMPANY_NAME: process.env.COMPANY_NAME || 'NWFTH',
   ENABLE_MOCK_DATA: process.env.ENABLE_MOCK_DATA || 'false',
   ENABLE_INVENTORY_ALERTS: process.env.ENABLE_INVENTORY_ALERTS || 'false',
-  // CSP Configuration
-  CSP_API_HOST: process.env.CSP_API_HOST || 'localhost',
-  CSP_API_PORT: process.env.CSP_API_PORT || '4400',
-  CSP_NETWORK_HOST: process.env.CSP_NETWORK_HOST || 'localhost',
-  CSP_NETWORK_PORT: process.env.CSP_NETWORK_PORT || '4400',
-  CSP_WS_PORT: process.env.CSP_WS_PORT || '4200'
+  // CSP Configuration - derived from actual API URL
+  CSP_API_HOST: apiHost,
+  CSP_API_PORT: process.env.SERVER_PORT || '4400',
+  CSP_NETWORK_HOST: apiHost,
+  CSP_NETWORK_PORT: process.env.SERVER_PORT || '4400',
+  CSP_WS_PORT: frontendPort
 };
 
 // Generate environment.ts content
