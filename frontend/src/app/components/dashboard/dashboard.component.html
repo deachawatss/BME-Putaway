@@ -1,0 +1,145 @@
+<main class="tw-min-h-screen tw-bg-gradient-to-br tw-from-background tw-to-muted tw-flex tw-flex-col" role="main">
+  <!-- NWFTH Header -->
+  <header class="tw-sticky tw-top-0 tw-z-50 tw-border-b tw-border-border tw-bg-gradient-to-r tw-from-brand-brown tw-to-brand-brown/90 tw-backdrop-blur-xl tw-shadow-nwfth-medium">
+    <div class="tw-container tw-flex tw-h-16 tw-items-center tw-justify-between tw-px-4 tw-mx-auto">
+      <!-- Company Brand -->
+      <div class="tw-flex tw-items-center tw-gap-4">
+        <div class="tw-relative">
+          <img 
+            src="assets/images/nwfth-company-logo.png" 
+            alt="Newly Weds Foods Thailand Company Logo" 
+            class="tw-h-20 tw-w-20 tw-object-contain"
+            loading="eager">
+        </div>
+        <div class="tw-hidden md:tw-block">
+          <h1 class="tw-text-lg tw-font-bold tw-text-white tw-tracking-tight tw-drop-shadow-sm">
+            Newly Weds Foods (Thailand)
+          </h1>
+          <p class="tw-text-sm tw-text-white/90 tw-font-medium">
+            Warehouse Management System
+          </p>
+        </div>
+      </div>
+      
+      <!-- User Info & Logout -->
+      <div class="tw-flex tw-items-center tw-gap-4">
+        <!-- User Avatar -->
+        <div class="tw-flex tw-items-center tw-gap-3">
+          <div class="tw-relative">
+            <div class="tw-h-9 tw-w-9 tw-rounded-full tw-bg-gradient-to-r tw-from-brand-brown tw-to-brand-brown/80 tw-text-white tw-flex tw-items-center tw-justify-center tw-text-sm tw-font-semibold tw-shadow-nwfth-medium tw-ring-2 tw-ring-white tw-ring-offset-1">
+              {{ getInitials(currentUser?.display_name || 'User') }}
+            </div>
+            <div class="tw-absolute tw--inset-1 tw-bg-gradient-to-r tw-from-brand-brown/20 tw-to-brand-amber/20 tw-rounded-full tw-blur tw-opacity-50"></div>
+          </div>
+          <div class="tw-hidden sm:tw-block tw-text-sm">
+            <div class="tw-font-semibold tw-text-white tw-drop-shadow-sm">
+              {{ currentUser?.display_name || 'User' }}
+            </div>
+            <div class="tw-text-white/90 tw-font-medium">
+              {{ currentUser?.department || 'Staff Member' }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Logout Button -->
+        <button 
+          type="button"
+          class="nwfth-button-secondary tw-h-9 tw-px-3 tw-text-sm tw-bg-transparent tw-text-white tw-border-white/50 hover:tw-bg-white hover:tw-text-slate-800 tw-backdrop-blur-sm"
+          (click)="onLogout()">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Content - Clean focus on menu cards -->
+  <div class="tw-flex tw-flex-col tw-flex-1 tw-relative tw-z-10">
+    <div class="tw-flex tw-items-center tw-justify-center tw-flex-1 tw-px-4 tw-py-12">
+      <!-- Menu Options Grid - Perfectly centered -->
+      <div class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-10 tw-max-w-5xl tw-w-full">
+          <app-card 
+            *ngFor="let option of menuOptions"
+            class="nwfth-card tw-cursor-pointer tw-transition-all tw-duration-300 hover:tw-shadow-nwfth-large hover:tw--translate-y-2 tw-group tw-relative tw-overflow-hidden tw-rounded-3xl"
+            (click)="navigateToMenu(option.route)"
+            [attr.role]="'button'"
+            [attr.tabindex]="0"
+            [attr.aria-label]="'Navigate to ' + option.title"
+            (keydown.enter)="navigateToMenu(option.route)"
+            (keydown.space)="navigateToMenu(option.route)">
+            
+            <app-card-content class="tw-p-12 tw-text-center tw-relative">
+              <!-- Animated Background Glow Effect -->
+              <div class="tw-absolute tw-inset-0 tw-bg-gradient-to-br tw-from-brand-amber/5 tw-via-brand-amber/3 tw-to-brand-amber/5 tw-opacity-0 group-hover:tw-opacity-100 tw-transition-all tw-duration-500"></div>
+              
+              <!-- Icon Container -->
+              <div class="tw-relative tw-z-10">
+                <div 
+                  class="tw-w-32 tw-h-32 tw-rounded-3xl tw-flex tw-items-center tw-justify-center tw-mx-auto tw-mb-10 tw-transition-all tw-duration-300 tw-shadow-nwfth-medium group-hover:tw-shadow-nwfth-large group-hover:tw-scale-110 tw-ring-4 tw-ring-brand-amber/20 group-hover:tw-ring-brand-amber/40 tw-relative tw-overflow-hidden"
+                  [ngClass]="option.color + ' group-hover:' + option.hoverColor.replace('hover:', '')">
+                  <span class="tw-text-7xl tw-drop-shadow-lg tw-transition-all tw-duration-300 group-hover:tw-scale-105 tw-relative tw-z-10" role="img" [attr.aria-label]="option.title + ' icon'">
+                    {{ option.icon }}
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Content -->
+              <div class="tw-relative tw-z-10">
+                <h3 class="tw-text-3xl lg:tw-text-4xl tw-font-bold tw-text-foreground tw-mb-8 tw-drop-shadow-sm tw-tracking-tight">
+                  {{ option.title }}
+                </h3>
+                
+                <!-- Action Arrow -->
+                <div class="tw-flex tw-justify-center">
+                  <div class="tw-w-16 tw-h-16 tw-rounded-full tw-bg-gradient-to-br tw-from-background tw-to-muted tw-flex tw-items-center tw-justify-center group-hover:tw-from-brand-amber/10 group-hover:tw-to-brand-amber/5 tw-transition-all tw-duration-300 group-hover:tw-scale-110 tw-shadow-nwfth-soft group-hover:tw-shadow-nwfth-medium tw-ring-2 tw-ring-border group-hover:tw-ring-brand-amber/30">
+                    <svg 
+                      class="tw-w-8 tw-h-8 tw-text-foreground group-hover:tw-text-brand-brown group-hover:tw-translate-x-1 tw-transition-all tw-duration-300" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                      aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </app-card-content>
+          </app-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer with System Status -->
+  <footer class="tw-mt-auto tw-border-t tw-border-border tw-bg-gradient-to-r tw-from-brand-brown tw-to-brand-brown/90 tw-backdrop-blur-xl tw-shadow-nwfth-medium">
+    <div class="tw-container tw-mx-auto tw-px-4 tw-py-4">
+      <div class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center sm:tw-justify-between tw-gap-3">
+        <!-- Copyright -->
+        <div class="tw-flex tw-items-center tw-gap-2">
+          <span class="tw-text-sm tw-text-white/90 tw-font-medium tw-drop-shadow-sm">&copy; 2025 Newly Weds Foods Thailand</span>
+        </div>
+        
+        <!-- System Status -->
+        <div class="tw-flex tw-items-center tw-gap-4 tw-text-xs">
+          <span class="tw-flex tw-items-center tw-gap-1">
+            <span class="tw-font-medium tw-text-white/70">Version:</span>
+            <span class="tw-text-white tw-font-semibold">1.0.0</span>
+          </span>
+          <span class="tw-text-white/60">•</span>
+          <span class="tw-flex tw-items-center tw-gap-1">
+            <span class="tw-font-medium tw-text-white/70">Backend:</span>
+            <span class="tw-text-green-300 tw-font-semibold">Connected</span>
+          </span>
+          <span class="tw-text-white/60">•</span>
+          <span class="tw-flex tw-items-center tw-gap-1">
+            <span class="tw-font-medium tw-text-white/70">Database:</span>
+            <span class="tw-text-green-300 tw-font-semibold">Online</span>
+          </span>
+          <span class="tw-text-white/60">•</span>
+          <span class="tw-flex tw-items-center tw-gap-1">
+            <span class="tw-font-medium tw-text-white/70">User:</span>
+            <span class="tw-text-green-300 tw-font-semibold">Active</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</main>

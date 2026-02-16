@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>NWFTH - Warehouse Management System</title>
+  <base href="/">
+  
+  <!-- Enhanced viewport for better mobile experience -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  
+  <!-- SEO and Accessibility Meta Tags -->
+  <meta name="description" content="Newly Weds Foods (Thailand) Enterprise Warehouse Management System - Efficient bulk picking, inventory management, and warehouse operations">
+  <meta name="keywords" content="warehouse management, bulk picking, inventory, NWFTH, logistics">
+  <meta name="author" content="Newly Weds Foods (Thailand)">
+  <meta name="robots" content="index, follow">
+  
+  <!-- PWA Meta Tags -->
+  <meta name="application-name" content="NWFTH Warehouse">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NWFTH Warehouse">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <!-- Theme Colors for Different Platforms -->
+  <meta name="theme-color" content="#6D4C41">
+  <meta name="msapplication-TileColor" content="#6D4C41">
+  <meta name="msapplication-navbutton-color" content="#6D4C41">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#6D4C41">
+  
+  <!-- Icons for PWA -->
+  <link rel="icon" type="image/svg+xml" href="assets/icons/nwfth-logo.svg">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Performance Optimizations -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  
+  <!-- Enhanced Font Loading with display=swap -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+  
+  <!-- Critical CSS for faster FCP -->
+  <style>
+    /* Critical styles for first paint */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    app-root {
+      display: block;
+      min-height: 100vh;
+      background-color: #F5F5F5;
+    }
+    
+    /* Loading animation for better perceived performance */
+    .app-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #6D4C41 0%, #5D4037 50%, #4E2A23 100%);
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  
+  <!-- Security Headers -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <!-- CSP: Development-friendly configuration -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:4400 http://localhost:4400 ws://localhost:4200">
+</head>
+<body>
+  <app-root>
+    <!-- Enhanced Loading Screen -->
+    <div class="app-loading">
+      <div class="loading-spinner" role="progressbar" aria-label="Loading application"></div>
+    </div>
+  </app-root>
+
+  <!-- Service Worker Registration - Only in production -->
+  <script>
+    // Only register service worker in production builds
+    if ('serviceWorker' in navigator && window.location.protocol === 'https:' && !window.location.hostname.includes('localhost')) {
+      navigator.serviceWorker.register('/ngsw-worker.js')
+        .then(registration => {
+          console.log('SW registered:', registration);
+        })
+        .catch(error => {
+          console.log('SW registration failed:', error);
+        });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "name": "nwfth-mobile-backend",
+  "version": "1.0.0",
+  "description": "NWFTH Enterprise Mobile Bulk Picking - Rust Backend",
+  "scripts": {
+    "dev": "cargo watch -x run",
+    "start": "cargo run",
+    "build": "cargo build --release",
+    "test": "cargo test",
+    "format": "cargo fmt",
+    "lint": "cargo clippy",
+    "clean": "cargo clean",
+    "install": "cargo build"
+  },
+  "repository": {
+    "type": "git", 
+    "url": "Enterprise Mobile Bulk Picking Application"
+  },
+  "keywords": [
+    "rust",
+    "backend",
+    "api",
+    "enterprise",
+    "bulk-picking",
+    "nwfth",
+    "bme4"
+  ],
+  "author": "NWFTH Development Team",
+  "license": "MIT",
+  "engines": {
+    "rust": ">=1.70.0"
+  }
+}

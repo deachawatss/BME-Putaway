@@ -1,0 +1,38 @@
+# Rust
+backend/target/
+backend/Cargo.lock
+backend/**/*.rs.bk
+backend/*.pdb
+
+# Environment files
+backend/.env
+frontend/.env
+.env.local
+.env.*.local
+
+# Node.js
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.cache/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp

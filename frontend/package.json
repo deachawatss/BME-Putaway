@@ -1,0 +1,67 @@
+{
+  "name": "putaway-frontend",
+  "version": "1.1.0",
+  "scripts": {
+    "ng": "ng",
+    "prestart": "node src/environments/load-env.js",
+    "start": "ng serve --host ${FRONTEND_HOST:-0.0.0.0} --port ${FRONTEND_PORT:-4202}",
+    "start:custom": "ng serve --host ${FRONTEND_HOST:-0.0.0.0} --port ${FRONTEND_PORT:-4202}",
+    "start:server": "ng serve --host 0.0.0.0 --port 8080",
+    "prebuild": "node src/environments/load-env.js",
+    "build": "ng build",
+    "build:prod": "node src/environments/load-env.js && ng build --configuration production",
+    "prewatch": "node src/environments/load-env.js",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^20.1.0",
+    "@angular/cdk": "^20.2.2",
+    "@angular/common": "^20.1.0",
+    "@angular/compiler": "^20.1.0",
+    "@angular/core": "^20.1.0",
+    "@angular/forms": "^20.1.0",
+    "@angular/material": "^20.2.2",
+    "@angular/platform-browser": "^20.1.0",
+    "@angular/router": "^20.1.0",
+    "@angular/service-worker": "^20.1.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-angular": "^0.539.0",
+    "rxjs": "~7.8.0",
+    "tailwind-merge": "^3.3.1",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.1.6",
+    "@angular/cli": "^20.1.6",
+    "@angular/compiler-cli": "^20.1.0",
+    "@types/jasmine": "~5.1.0",
+    "autoprefixer": "^10.4.21",
+    "dotenv": "^17.2.3",
+    "jasmine-core": "~5.8.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "postcss": "^8.5.6",
+    "sharp": "^0.34.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.8.2"
+  }
+}

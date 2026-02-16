@@ -1,0 +1,25 @@
+--- a/backend/src/main.rs
++++ b/backend/src/main.rs
+@@ -9,6 +9,7 @@ mod models;
+ mod services;
+ mod handlers {
+     pub mod bulk_runs;
++    pub mod ingredient_intelligence;
+     pub mod bulk_picking_validation;
+     pub mod putaway;
+ }
+@@ -419,6 +420,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+                 .route("/:run_no/validate-pick", post(bulk_picking_validation::validate_pick_operation))
+                 .route("/:run_no/validate-numpad", get(bulk_picking_validation::validate_numpad_input))
+                 .route("/:run_no/validate-ingredient", get(bulk_picking_validation::validate_ingredient_eligibility))
++                // **NEW BME4-Compatible Intelligence System Endpoints**
++                .route("/:run_no/ingredient-statuses", get(ingredient_intelligence::get_ingredient_statuses))
++                .route("/:run_no/available-ingredients", get(ingredient_intelligence::get_available_ingredients_for_search))
++                .route("/:run_no/coordination/initialize", post(ingredient_intelligence::initialize_run_coordination))
++                .route("/:run_no/coordination/evaluate-switch", post(ingredient_intelligence::evaluate_auto_switch))
++                .route("/:run_no/lot-optimization", get(ingredient_intelligence::get_lot_optimization))
++                .route("/:run_no/next-ingredient", get(ingredient_intelligence::get_next_recommended_ingredient))
++                .route("/:run_no/completion-metrics", get(ingredient_intelligence::get_run_completion_metrics))
+                 .route("/health", get(bulk_runs::bulk_runs_health))
+                 .with_state(state.database.clone()),
+         )

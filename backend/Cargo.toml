@@ -1,0 +1,55 @@
+[package]
+name = "putaway-backend"
+version = "1.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.0", features = ["full"] }
+axum = "0.8.4"
+tower = "0.5"
+tower-http = { version = "0.5", features = ["cors", "fs", "set-header", "trace"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+chrono-tz = "0.8"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
+anyhow = "1.0"
+thiserror = "1.0"
+rand = "0.8"
+
+# LDAP dependencies  
+ldap3 = "0.11"
+
+# JWT Authentication - jsonwebtoken implementation 
+jsonwebtoken = "9.3"
+
+
+# SQL Server dependencies
+tiberius = { version = "0.12", default-features = false, features = ["sql-browser-tokio", "rustls", "chrono"] }
+tokio-util = "0.7"
+# Connection pooling for performance
+deadpool = "0.10"
+bb8 = "0.8"
+bb8-tiberius = "0.15"
+
+# Environment configuration
+dotenv = "0.15"
+bigdecimal = { version = "0.3", features = ["serde"] }
+
+# Security - password hashing (SEC-001)
+bcrypt = "0.15"
+
+# Rate limiting (SEC-007)
+governor = "0.10"
+
+
+
+
+[dev-dependencies]
+reqwest = { version = "0.12", features = ["json"] }
+
+[features]
+default = []
+intelligence = []

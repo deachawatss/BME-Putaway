@@ -1,0 +1,29 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="90" fill="#6D4C41" stroke="#5D4037" stroke-width="4"/>
+  
+  <!-- Company Initials Circle -->
+  <circle cx="100" cy="100" r="70" fill="#5D4037" stroke="#4E2A23" stroke-width="2"/>
+  
+  <!-- NWFTH Text -->
+  <text x="100" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="white">NWFTH</text>
+  
+  <!-- Divider Line -->
+  <line x1="60" y1="100" x2="140" y2="100" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
+  
+  <!-- Subtitle Text -->
+  <text x="100" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-weight="500" font-size="12" fill="rgba(255,255,255,0.9)" letter-spacing="1px">THAILAND</text>
+  
+  <!-- Food Industry Icons -->
+  <g transform="translate(100, 140)">
+    <!-- Wheat Icon -->
+    <path d="M-15 -5 L-15 5 L-10 5 L-10 -5 Z M-12 -8 L-12 -3 M-10 -6 L-15 -6" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" fill="none"/>
+    <!-- Factory Icon -->
+    <rect x="0" y="-5" width="8" height="10" fill="rgba(255,255,255,0.7)"/>
+    <rect x="2" y="-8" width="2" height="3" fill="rgba(255,255,255,0.7)"/>
+    <rect x="4" y="-10" width="2" height="5" fill="rgba(255,255,255,0.7)"/>
+    <!-- Quality Badge -->
+    <circle cx="15" cy="0" r="4" fill="rgba(255,255,255,0.7)"/>
+    <text x="15" y="2" text-anchor="middle" font-family="Arial" font-size="4" fill="#6D4C41">Q</text>
+  </g>
+</svg>

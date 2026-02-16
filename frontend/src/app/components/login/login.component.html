@@ -1,0 +1,163 @@
+<main class="tw-min-h-screen tw-relative tw-flex tw-items-center tw-justify-center tw-p-4 tw-overflow-hidden" role="main">
+  <!-- Base gradient background -->
+  <div class="tw-absolute tw-inset-0 tw-bg-gradient-to-br tw-from-brand-brown tw-via-brand-brown/80 tw-to-brand-brown/90"></div>
+  
+  <!-- Animated gradient morphing overlay -->
+  <div class="tw-absolute tw-inset-0 tw-animate-gradient-morph"></div>
+  
+  <!-- Multi-layer floating particles system -->
+  <div class="tw-absolute tw-inset-0 tw-animate-particles-layer-1"></div>
+  <div class="tw-absolute tw-inset-0 tw-animate-particles-layer-2"></div>
+  <div class="tw-absolute tw-inset-0 tw-animate-particles-layer-3"></div>
+  
+  <!-- Animated glowing orbs -->
+  <div class="tw-absolute tw-inset-0 tw-animate-floating-orbs"></div>
+  
+  <!-- Wave patterns -->
+  <div class="tw-absolute tw-inset-0 tw-animate-wave-pattern"></div>
+  
+  <!-- Login form content - positioned above all background effects -->
+  <div class="nwfth-card tw-w-full tw-max-w-md tw-p-8 tw-space-y-6 tw-relative tw-z-20" role="region" aria-labelledby="login-heading">
+    <div class="tw-text-center tw-space-y-4">
+      <img 
+        src="assets/images/nwfth-company-logo.png" 
+        alt="Newly Weds Foods Thailand Company Logo" 
+        class="tw-h-32 tw-w-auto tw-mx-auto"
+        loading="eager">
+      <h1 id="login-heading" class="tw-text-xl tw-font-bold tw-text-black tw-whitespace-nowrap">
+        Warehouse Management System
+      </h1>
+    </div>
+    
+    <form 
+      [formGroup]="loginForm" 
+      (ngSubmit)="onSubmit()" 
+      class="tw-space-y-6"
+      role="form"
+      aria-labelledby="login-heading"
+      novalidate>
+      
+      <!-- Username Field -->
+      <div class="tw-space-y-2">
+        <label for="username" class="tw-block tw-text-sm tw-font-bold tw-text-foreground">Username</label>
+        <input 
+          id="username"
+          formControlName="username" 
+          placeholder="Enter your username"
+          autocomplete="username"
+          aria-describedby="username-help username-error"
+          [attr.aria-invalid]="loginForm.get('username')?.hasError('required') && loginForm.get('username')?.touched"
+          class="nwfth-input tw-w-full tw-min-h-touch tw-px-4 tw-py-3 tw-text-base" />
+        
+        <!-- Screen reader help text -->
+        <div id="username-help" class="tw-sr-only">
+          Enter your warehouse system username
+        </div>
+        
+        <!-- Error message -->
+        <div 
+          id="username-error" 
+          role="alert" 
+          aria-live="polite"
+          *ngIf="loginForm.get('username')?.hasError('required') && loginForm.get('username')?.touched"
+          class="tw-text-sm tw-text-red-600 tw-mt-1">
+          Username is required
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="tw-space-y-2">
+        <label for="password" class="tw-block tw-text-sm tw-font-bold tw-text-foreground">Password</label>
+        <input 
+          id="password"
+          type="password"
+          formControlName="password" 
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          aria-describedby="password-help password-error"
+          [attr.aria-invalid]="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched"
+          class="nwfth-input tw-w-full tw-min-h-touch tw-px-4 tw-py-3 tw-text-base" />
+        
+        <!-- Screen reader help text -->
+        <div id="password-help" class="tw-sr-only">
+          Enter your warehouse system password
+        </div>
+        
+        <!-- Error message -->
+        <div 
+          id="password-error" 
+          role="alert" 
+          aria-live="polite"
+          *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched"
+          class="tw-text-sm tw-text-red-600 tw-mt-1">
+          Password is required
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button 
+        type="submit"
+        class="nwfth-button-primary tw-w-full tw-min-h-touch tw-px-6 tw-py-3 tw-flex tw-items-center tw-justify-center tw-gap-2 tw-disabled:opacity-60 tw-disabled:cursor-not-allowed"
+        [disabled]="loginForm.disabled || isLoading"
+        [attr.aria-describedby]="isLoading ? 'loading-status' : null">
+        
+        <!-- Loading spinner -->
+        <div 
+          *ngIf="isLoading" 
+          class="tw-w-4 tw-h-4 tw-border-2 tw-border-current tw-border-t-transparent tw-rounded-full tw-animate-spin"
+          aria-hidden="true">
+        </div>
+        <span>{{ isLoading ? 'Signing In...' : 'Sign In' }}</span>
+        
+        <!-- Loading status for screen readers -->
+        <div 
+          id="loading-status" 
+          class="tw-sr-only" 
+          aria-live="polite"
+          *ngIf="isLoading">
+          Authentication in progress
+        </div>
+      </button>
+    </form>
+
+    <div class="tw-h-px tw-bg-border tw-my-6"></div>
+
+    <!-- Enhanced Connection Status with Frame -->
+    <div class="tw-flex tw-justify-center">
+      <div 
+        class="tw-relative tw-flex tw-items-center tw-gap-3 tw-px-4 tw-py-2 tw-rounded-lg tw-border-2 tw-font-medium tw-text-sm tw-transition-all tw-duration-300"
+        [ngClass]="getEnhancedConnectionStatusClass()"
+        role="status"
+        [attr.aria-label]="getConnectionStatusAriaLabel()">
+        
+        <!-- Animated Status Indicator -->
+        <div class="tw-relative tw-flex tw-items-center">
+          <div 
+            class="tw-w-3 tw-h-3 tw-rounded-full tw-transition-all tw-duration-300"
+            [ngClass]="getStatusIndicatorClass()">
+          </div>
+          <div 
+            *ngIf="connectionStatus === 'unknown'"
+            class="tw-absolute tw-w-3 tw-h-3 tw-rounded-full tw-animate-ping"
+            [ngClass]="getStatusPingClass()">
+          </div>
+        </div>
+        
+        <!-- Status Text -->
+        <span class="tw-font-semibold">{{ getConnectionStatusText() }}</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="tw-text-center tw-text-xs tw-text-muted-foreground tw-mt-4">
+      <p>&copy; 2025 Newly Weds Foods Thailand</p>
+    </div>
+  </div>
+</main>
+
+<!-- Skip link for keyboard navigation -->
+<a 
+  href="#login-heading" 
+  class="tw-sr-only tw-absolute tw-left-0 tw-top-0 tw-z-50 tw-bg-background tw-text-foreground tw-p-4 tw-rounded focus:tw-relative focus:tw-z-auto">
+  Skip to main content
+</a>

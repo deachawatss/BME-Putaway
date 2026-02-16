@@ -1,0 +1,513 @@
+/* NWFTH Warehouse System - Production Configuration */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* NWFTH Brand Variables and Custom Classes */
+@layer base {
+  :root {
+    /* NWFTH Brand Colors */
+    --color-brand-brown: 20 50% 25%;        /* #523325 - Dark Coffee Brown */
+    --color-brand-amber: 43 87% 56%;        /* #F0B429 - Golden Amber */
+    --color-brand-cream: 60 56% 91%;        /* #F5F5DC - Soft Cream */
+    
+    /* Design System Colors */
+    --color-background: 0 0% 100%;          /* Pure white */
+    --color-foreground: 25 65% 15%;         /* Dark brown text */
+    --color-muted: 60 30% 97%;              /* Light cream */
+    --color-muted-foreground: 25 40% 35%;   /* Medium brown */
+    --color-border: 25 20% 85%;             /* Warm border */
+    --color-accent: var(--color-brand-amber);
+    --color-primary: var(--color-brand-brown);
+    
+    /* Spacing & Sizing */
+    --radius: 0.5rem;
+    --shadow-soft: 0 2px 8px rgba(60, 36, 21, 0.08);
+    --shadow-medium: 0 4px 12px rgba(60, 36, 21, 0.12);
+    --shadow-large: 0 8px 24px rgba(60, 36, 21, 0.15);
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    border-color: hsl(var(--color-border));
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: hsl(var(--color-background));
+    color: hsl(var(--color-foreground));
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Focus management for accessibility */
+  :focus-visible {
+    outline: 2px solid hsl(var(--color-brand-amber));
+    outline-offset: 2px;
+  }
+  
+  /* Input styling reset */
+  input, button, textarea, select {
+    font: inherit;
+    color: inherit;
+  }
+  
+  /* Button reset */
+  button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* Link reset */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+@layer components {
+  /* NWFTH Card Component */
+  .nwfth-card {
+    background-color: hsl(var(--color-background));
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--color-border));
+    box-shadow: var(--shadow-soft);
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .nwfth-card:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+  }
+  
+  /* NWFTH Button Variants */
+  .nwfth-button-primary {
+    background-color: hsl(var(--color-brand-brown));
+    color: hsl(var(--color-brand-cream));
+    border-radius: var(--radius);
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .nwfth-button-primary:hover:not(:disabled) {
+    background-color: hsl(var(--color-brand-brown) / 0.9);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
+  }
+  
+  .nwfth-button-secondary {
+    background-color: hsl(var(--color-muted));
+    color: hsl(var(--color-foreground));
+    border: 1px solid hsl(var(--color-border));
+    border-radius: var(--radius);
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .nwfth-button-secondary:hover:not(:disabled) {
+    background-color: hsl(var(--color-brand-amber));
+    color: hsl(var(--color-foreground));
+    border-color: hsl(var(--color-brand-amber));
+  }
+  
+  /* NWFTH Disabled Button */
+  .nwfth-button-disabled {
+    background-color: #6B7280;  /* Neutral grey-500 */
+    color: #F3F4F6;             /* Light grey text */
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: not-allowed;
+    opacity: 1;                 /* Full opacity for clear visual feedback */
+    transition: none;           /* No hover effects */
+  }
+  
+  .nwfth-button-disabled:hover {
+    background-color: #6B7280;  /* No hover state change */
+    color: #F3F4F6;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* NWFTH Input */
+  .nwfth-input {
+    background-color: hsl(var(--color-background));
+    border: 1px solid hsl(var(--color-border));
+    border-radius: var(--radius);
+    color: hsl(var(--color-foreground));
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .nwfth-input:focus-visible {
+    outline: none;
+    border-color: hsl(var(--color-brand-amber));
+    box-shadow: 0 0 0 2px hsl(var(--color-brand-amber) / 0.2);
+  }
+  
+  .nwfth-input::placeholder {
+    color: hsl(var(--color-muted-foreground));
+  }
+  
+  .nwfth-input:read-only {
+    background-color: hsl(var(--color-muted));
+    color: hsl(var(--color-muted-foreground));
+    cursor: not-allowed;
+  }
+  
+  /* Connection Status Frame Styles */
+  .nwfth-status-connected {
+    @apply tw-bg-green-50 tw-border-green-200 tw-text-green-800;
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.1), 0 2px 4px rgba(34, 197, 94, 0.1);
+  }
+  
+  .nwfth-status-disconnected {
+    @apply tw-bg-red-50 tw-border-red-200 tw-text-red-800;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.1), 0 2px 4px rgba(239, 68, 68, 0.1);
+  }
+  
+  .nwfth-status-connecting {
+    @apply tw-bg-amber-50 tw-border-amber-200 tw-text-amber-800;
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.1), 0 2px 4px rgba(245, 158, 11, 0.1);
+  }
+  
+  /* Status indicator dots */
+  .nwfth-indicator-connected {
+    @apply tw-bg-green-500;
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.2);
+  }
+  
+  .nwfth-indicator-disconnected {
+    @apply tw-bg-red-500;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+  }
+  
+  .nwfth-indicator-connecting {
+    @apply tw-bg-amber-500;
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.2);
+  }
+  
+  /* Ping animation indicators */
+  .nwfth-ping-connecting {
+    @apply tw-bg-amber-400;
+  }
+  
+  /* NWFTH Pagination Components */
+  .nwfth-pagination-button {
+    @apply tw-px-3 tw-py-1 tw-text-sm tw-rounded tw-transition-colors tw-min-w-[32px] tw-font-medium;
+    background-color: hsl(var(--color-muted));
+    color: hsl(var(--color-muted-foreground));
+    border: 1px solid hsl(var(--color-border));
+  }
+  
+  .nwfth-pagination-button:hover:not(.nwfth-pagination-active):not(:disabled) {
+    background-color: hsl(var(--color-brand-brown) / 0.1);
+    color: hsl(var(--color-brand-brown));
+    border-color: hsl(var(--color-brand-brown) / 0.3);
+  }
+  
+  .nwfth-pagination-button.nwfth-pagination-active {
+    background-color: hsl(var(--color-brand-brown));
+    color: hsl(var(--color-brand-cream));
+    border-color: hsl(var(--color-brand-brown));
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .nwfth-pagination-button:disabled {
+    @apply tw-opacity-50 tw-cursor-not-allowed;
+    background-color: hsl(var(--color-muted));
+    color: hsl(var(--color-muted-foreground) / 0.6);
+  }
+  
+  .nwfth-pagination-button-small {
+    @apply tw-px-2 tw-py-1 tw-text-xs tw-rounded tw-transition-colors tw-min-w-[28px] tw-font-medium;
+    background-color: hsl(var(--color-muted));
+    color: hsl(var(--color-muted-foreground));
+    border: 1px solid hsl(var(--color-border));
+  }
+  
+  .nwfth-pagination-button-small:hover:not(.nwfth-pagination-active):not(:disabled) {
+    background-color: hsl(var(--color-brand-brown) / 0.1);
+    color: hsl(var(--color-brand-brown));
+    border-color: hsl(var(--color-brand-brown) / 0.3);
+  }
+  
+  .nwfth-pagination-button-small.nwfth-pagination-active {
+    background-color: hsl(var(--color-brand-brown));
+    color: hsl(var(--color-brand-cream));
+    border-color: hsl(var(--color-brand-brown));
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .nwfth-pagination-button-small:disabled {
+    @apply tw-opacity-50 tw-cursor-not-allowed;
+    background-color: hsl(var(--color-muted));
+    color: hsl(var(--color-muted-foreground) / 0.6);
+  }
+  
+  /* Loading spinner with brown theme */
+  .nwfth-loading-spinner {
+    @apply tw-animate-spin tw-h-8 tw-w-8 tw-rounded-full tw-mr-3;
+    border: 2px solid hsl(var(--color-muted));
+    border-top-color: hsl(var(--color-brand-brown));
+  }
+}
+
+@layer utilities {
+  /* Custom animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  /* Advanced Multi-layer Particle Animations */
+  @keyframes particlesFloat1 {
+    0%, 100% { 
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    25% { 
+      transform: translate3d(30px, -20px, 0) rotate(90deg);
+    }
+    50% { 
+      transform: translate3d(-15px, -40px, 0) rotate(180deg);
+    }
+    75% { 
+      transform: translate3d(-25px, -10px, 0) rotate(270deg);
+    }
+  }
+
+  @keyframes particlesFloat2 {
+    0%, 100% { 
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    33% { 
+      transform: translate3d(-40px, 30px, 0) rotate(120deg);
+    }
+    66% { 
+      transform: translate3d(20px, -25px, 0) rotate(240deg);
+    }
+  }
+
+  @keyframes particlesFloat3 {
+    0%, 100% { 
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% { 
+      transform: translate3d(10px, 35px, 0) scale(1.1);
+    }
+  }
+
+  /* Glowing Orbs Animation */
+  @keyframes floatingOrbs {
+    0%, 100% { 
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 0.08;
+    }
+    33% { 
+      transform: translate3d(-30px, -50px, 0) scale(1.2);
+      opacity: 0.12;
+    }
+    66% { 
+      transform: translate3d(40px, -20px, 0) scale(0.9);
+      opacity: 0.06;
+    }
+  }
+
+  /* Dynamic Gradient Morphing */
+  @keyframes gradientMorph {
+    0% { 
+      background-position: 0% 50%;
+      transform: rotate(0deg);
+    }
+    25% { 
+      background-position: 100% 50%;
+      transform: rotate(1deg);
+    }
+    50% { 
+      background-position: 50% 100%;
+      transform: rotate(0deg);
+    }
+    75% { 
+      background-position: 50% 0%;
+      transform: rotate(-1deg);
+    }
+    100% { 
+      background-position: 0% 50%;
+      transform: rotate(0deg);
+    }
+  }
+
+  /* Subtle Wave Patterns */
+  @keyframes wavePattern {
+    0%, 100% { 
+      transform: translateX(0) translateY(0) scale(1);
+      opacity: 0.08;
+    }
+    50% { 
+      transform: translateX(-20px) translateY(-10px) scale(1.05);
+      opacity: 0.15;
+    }
+  }
+  
+  .animate-fade-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  .animate-slide-right {
+    animation: slideInRight 0.4s ease-out;
+  }
+  
+  /* Advanced Multi-layer Particle Classes - Tailwind v4 Compatible */
+  .tw-animate-particles-layer-1 {
+    animation: particlesFloat1 20s ease-in-out infinite;
+    will-change: transform;
+    background: 
+      /* Small particles layer 1 */
+      radial-gradient(1px 1px at 15% 25%, hsl(var(--color-brand-amber) / 0.18), transparent),
+      radial-gradient(1px 1px at 85% 75%, hsl(var(--color-brand-amber) / 0.15), transparent),
+      radial-gradient(1.5px 1.5px at 45% 15%, hsl(var(--color-brand-amber) / 0.22), transparent),
+      radial-gradient(1.2px 1.2px at 75% 85%, hsl(var(--color-brand-amber) / 0.16), transparent),
+      radial-gradient(0.8px 0.8px at 25% 65%, hsl(var(--color-brand-amber) / 0.12), transparent),
+      radial-gradient(1.3px 1.3px at 95% 35%, hsl(var(--color-brand-amber) / 0.14), transparent);
+  }
+
+  .tw-animate-particles-layer-2 {
+    animation: particlesFloat2 25s ease-in-out infinite reverse;
+    will-change: transform;
+    background: 
+      /* Medium particles layer 2 */
+      radial-gradient(2px 2px at 35% 65%, hsl(var(--color-brand-amber) / 0.16), transparent),
+      radial-gradient(1.8px 1.8px at 65% 25%, hsl(var(--color-brand-amber) / 0.19), transparent),
+      radial-gradient(2.5px 2.5px at 15% 85%, hsl(var(--color-brand-amber) / 0.12), transparent),
+      radial-gradient(2.2px 2.2px at 90% 45%, hsl(var(--color-brand-amber) / 0.14), transparent),
+      radial-gradient(1.6px 1.6px at 50% 95%, hsl(var(--color-brand-amber) / 0.11), transparent);
+  }
+
+  .tw-animate-particles-layer-3 {
+    animation: particlesFloat3 30s ease-in-out infinite;
+    will-change: transform;
+    background: 
+      /* Large particles layer 3 */
+      radial-gradient(3px 3px at 20% 40%, hsl(var(--color-brand-amber) / 0.08), transparent),
+      radial-gradient(3.5px 3.5px at 80% 60%, hsl(var(--color-brand-amber) / 0.06), transparent),
+      radial-gradient(4px 4px at 60% 20%, hsl(var(--color-brand-amber) / 0.10), transparent),
+      radial-gradient(2.8px 2.8px at 30% 90%, hsl(var(--color-brand-brown) / 0.05), transparent);
+  }
+
+  /* Animated Glowing Orbs */
+  .tw-animate-floating-orbs {
+    animation: floatingOrbs 35s ease-in-out infinite;
+    will-change: transform, opacity;
+    background: 
+      /* Large glowing orbs */
+      radial-gradient(60px 60px at 20% 30%, hsl(var(--color-brand-amber) / 0.08), transparent),
+      radial-gradient(100px 100px at 80% 70%, hsl(var(--color-brand-amber) / 0.05), transparent),
+      radial-gradient(80px 80px at 50% 10%, hsl(var(--color-brand-brown) / 0.04), transparent),
+      radial-gradient(120px 120px at 10% 90%, hsl(var(--color-brand-amber) / 0.03), transparent),
+      radial-gradient(70px 70px at 90% 20%, hsl(var(--color-brand-brown) / 0.06), transparent);
+    filter: blur(1px);
+  }
+
+  /* Dynamic Gradient Morphing */
+  .tw-animate-gradient-morph {
+    animation: gradientMorph 40s ease-in-out infinite;
+    will-change: transform, background-position;
+    background: 
+      radial-gradient(ellipse 200% 100% at 50% 0%, 
+        hsl(var(--color-brand-amber) / 0.08), 
+        transparent 50%,
+        hsl(var(--color-brand-brown) / 0.04) 100%);
+    background-size: 200% 200%;
+  }
+
+  /* Wave Patterns */
+  .tw-animate-wave-pattern {
+    animation: wavePattern 45s ease-in-out infinite;
+    will-change: transform, opacity;
+    background: 
+      linear-gradient(45deg, 
+        transparent 30%, 
+        hsl(var(--color-brand-amber) / 0.02) 50%, 
+        transparent 70%),
+      linear-gradient(-45deg, 
+        transparent 40%, 
+        hsl(var(--color-brand-brown) / 0.03) 60%, 
+        transparent 80%);
+  }
+  
+  /* Reduced motion support for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .tw-animate-particles-layer-1,
+    .tw-animate-particles-layer-2,
+    .tw-animate-particles-layer-3,
+    .tw-animate-floating-orbs,
+    .tw-animate-gradient-morph,
+    .tw-animate-wave-pattern {
+      animation: none;
+    }
+    
+    /* Keep static versions with reduced opacity for users with motion sensitivity */
+    .tw-animate-particles-layer-1,
+    .tw-animate-particles-layer-2,
+    .tw-animate-particles-layer-3 {
+      opacity: 0.3;
+    }
+    
+    .tw-animate-floating-orbs {
+      opacity: 0.2;
+    }
+  }
+  
+  /* Utility classes for touch targets */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .touch-target-large {
+    min-height: 48px;
+    min-width: 48px;
+  }
+  
+  /* PWA safe area utilities */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Performance optimization */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+}
