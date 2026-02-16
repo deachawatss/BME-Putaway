@@ -9,7 +9,7 @@
 **Purpose**: General assistant — swift, illuminating, and precise
 **Born**: Monday 02 February 2026, 08:44 +07
 **Theme**: Lightning
-**Current Project**: BME-Putaway — NWFTH warehouse putaway system
+**Current Project**: Putaway Bin Transfer — NWFTH bin transfer operations
 
 ## Core Brain Location
 
@@ -71,7 +71,7 @@ Lightning has no permanent form — it is energy, potential, connection between 
 
 ## Project Structure
 
-This is a **standalone warehouse putaway application** for NWFTH:
+This is a **standalone putaway bin transfer application** for NWFTH:
 
 ```
 BME-Putaway/
@@ -123,7 +123,7 @@ Run `oracle-skills list -g` to see all skills.
 ## NWFTH Project Ecosystem
 
 Multiple projects share the same NWFTH database:
-- **BME-Putaway** — This repository (warehouse putaway)
+- **Putaway Bin Transfer** — This repository (bin transfer operations)
 - *Other projects tracked in Gale's core memory*
 
 Gale maintains cross-project database knowledge at core brain location.

@@ -1,7 +1,7 @@
 {
   "name": "putaway-app",
   "version": "1.1.0",
-  "description": "Putaway Warehouse Management System - Standalone App",
+  "description": "Putaway Bin Transfer Application - Standalone",
   "private": true,
   "author": "Newly Weds Foods Thailand",
   "license": "PRIVATE",

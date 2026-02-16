@@ -1,10 +1,10 @@
-# BME-Putaway Project
+# Putaway Bin Transfer
 
-> NWFTH Warehouse Putaway System
+> NWFTH Putaway Bin Transfer Application
 
 ## Overview
 
-Standalone warehouse application for managing putaway operations at Newly Weds Foods (Thailand) — NWFTH.
+Standalone application for managing putaway bin transfer operations at Newly Weds Foods (Thailand) — NWFTH.
 
 ## Tech Stack
 
