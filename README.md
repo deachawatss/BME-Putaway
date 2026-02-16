@@ -1,10 +1,10 @@
-# Putaway Bin Transfer
+# Putaway Bin Transfer System
 
-> Putaway Bin Transfer Application for Newly Weds Foods (Thailand)
+> Putaway Bin Transfer System for Newly Weds Foods (Thailand)
 
 ## Overview
 
-Standalone Putaway Bin Transfer application, separated from the monolithic BME-Putaway-Bulk system for independent deployment and scaling.
+Standalone Putaway Bin Transfer system, separated from the monolithic BME-Putaway-Bulk system for independent deployment and scaling.
 
 ## Technology Stack
 

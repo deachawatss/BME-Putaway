@@ -1,10 +1,10 @@
-# Putaway Bin Transfer
+# Putaway Bin Transfer System
 
-> NWFTH Putaway Bin Transfer Application
+> NWFTH Putaway Bin Transfer System
 
 ## Overview
 
-Standalone application for managing putaway bin transfer operations at Newly Weds Foods (Thailand) — NWFTH.
+Standalone system for managing putaway bin transfer operations at Newly Weds Foods (Thailand) — NWFTH.
 
 ## Tech Stack
 
