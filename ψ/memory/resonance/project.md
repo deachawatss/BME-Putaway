@@ -4,7 +4,7 @@
 
 ## Overview
 
-Standalone warehouse application for managing putaway operations at Nawaminthrachinuthit Triphum School (NWFTH).
+Standalone warehouse application for managing putaway operations at Newly Weds Foods (Thailand) — NWFTH.
 
 ## Tech Stack
 
