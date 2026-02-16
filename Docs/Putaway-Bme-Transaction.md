@@ -528,6 +528,208 @@ COMMIT;
 
 ---
 
+---
+
+## Appendix C: Transfer WITH Commit Pattern (Second Trace Analysis)
+
+**Date**: 2026-02-16
+**Document**: BT-26112175
+**Transfer Qty**: 3100 (not 61000 - user typo)
+**Source**: K0900-1B → **Destination**: PWPRD
+
+### Pre-Transfer State
+
+| Bin | QtyOnHand | Qtycommitsales | Available | Notes |
+|-----|-----------|----------------|-----------|-------|
+| K0900-1B (Source) | 3850 | 6100 | -2250 | **Negative available!** |
+| PWPRD (Dest) | 50 | 0 | 50 | |
+
+**Critical Finding**: Source bin had negative available quantity before transfer! This suggests the legacy system allows transfers even when committed quantity exceeds on-hand.
+
+### Post-Transfer State (Verified)
+
+| Bin | QtyOnHand | Qtycommitsales | Available | Change |
+|-----|-----------|----------------|-----------|--------|
+| K0900-1B (Source) | 3000 | 100 | 2900 | -850 (not -3100!) |
+| PWPRD (Dest) | 3150 | 6000 | -2850 | +3100, +6000 commit |
+
+**Anomaly**: Source bin QtyOnHand decreased by only 850, not 3100. This indicates partial processing or other concurrent transactions.
+
+### LotTransaction Records
+
+| LotTranNo | Type | BinNo | Qty | DocNo | Processed |
+|-----------|------|-------|-----|-------|-----------|
+| 18318702 | 9 (OUT) | K0900-1B | 3100 | BT-26112175 | **Y** |
+| 18318703 | 8 (IN) | PWPRD | 3100 | BT-26112175 | **Y** |
+
+### Key Differences: WITHOUT Commit vs WITH Commit
+
+| Aspect | WITHOUT Commit (First Trace) | WITH Commit (Second Trace) |
+|--------|------------------------------|----------------------------|
+| **Container Query** | ❌ Not present | ✅ `Containermaster` RIGHT JOIN query |
+| **Unit Conversion** | ❌ Not present | ✅ `INQTYCNV` + `INUOMD` queries |
+| **Connection Reset** | ❌ Not present | ✅ `sp_reset_connection` |
+| **Validation Repetition** | 1x | 2x (queries repeated) |
+| **Log Completeness** | Complete (showed INSERTs) | **Incomplete** (cut off) |
+| **Processing Speed** | Fast (500 qty) | Slow/Freezing suspected (3100 qty) |
+
+### New Query Patterns Observed
+
+#### 1. Container-Aware Lot Query
+```sql
+SELECT
+    A.LotNo, A.BinNo,
+    ISNULL(C.ContainerNo, 0) AS ContainerNo,
+    A.ItemKey, B.Desc1 AS Description,
+    A.LocationKey AS Location,
+    CASE ISNULL(C.ContainerNo, 0)
+        WHEN 0 THEN CAST(ROUND(a.QtyOnHand, 4) AS DECIMAL(22,4))
+        ELSE CAST(ROUND(c.QtyOnHand, 4) AS DECIMAL(22,4))
+    END AS QtyOnHand,
+    A.QtyCommitSales AS QtyCommited,
+    -- ... more fields
+FROM ContainerMaster C
+RIGHT OUTER JOIN LotMaster A ON A.LotNo = C.LotNo
+    AND A.BinNo = C.BinNo
+    AND A.LocationKey = C.LocationKey
+    AND A.ItemKey = C.ItemKey
+INNER JOIN InMast B ON A.ItemKey = B.ItemKey
+WHERE B.MultipleBinsReq = 'Y'
+ORDER BY a.LotNo, a.itemkey, a.locationKey, a.binno, c.containerno
+```
+
+**Key Insight**: System supports containerized inventory tracking.
+
+#### 2. Unit of Measure Conversion
+```sql
+-- Get conversion factors
+(SELECT ToKey
+ FROM INQTYCNV
+ WHERE FROMKEY = 'KG'
+   AND (UMScope = 0
+        OR UMItemClassKey IN (SELECT InClassKey FROM Inloc WHERE ItemKey = @itemKey)
+        OR UMItemKey = @itemKey)
+) UNION SELECT 'KG'
+
+-- Get UOM details
+SELECT A.UMScope, A.UMItemClassKey, A.UMItemKey, A.FromKey, A.ToKey,
+       A.convfctr AS ConvFact, A.Operation, B.UMQtyDP, B.UmPriceCostDP
+FROM INQTYCNV A, INUOMD B
+WHERE A.FromKey = 'KG' AND A.ToKey = 'KG'
+  AND (A.UMScope = 0 OR ...)
+  AND B.UOMKey = 'KG'
+ORDER BY A.UMScope DESC
+```
+
+**Key Insight**: System performs UOM conversion validation before transfer.
+
+#### 3. Connection Pool Reset
+```sql
+exec sp_reset_connection
+```
+
+**Significance**: Indicates connection pooling is used. Reset occurs between validation and commit phases, suggesting:
+- Long-running transactions held open
+- Connection state cleanup before critical operations
+- Possible timeout/reconnection handling
+
+### Transaction Flow WITH Commit
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 1: Initial Load (Same as WITHOUT commit)             │
+├─────────────────────────────────────────────────────────────┤
+│  1. Container query (NEW)                                   │
+│  2. DistributionParameter checks (x2)                       │
+│  3. UOM conversion queries (NEW)                            │
+│  4. LotMaster lookup                                        │
+├─────────────────────────────────────────────────────────────┤
+│  PHASE 2: Validation (Repeated 2x!)                         │
+├─────────────────────────────────────────────────────────────┤
+│  5. Available bins query                                    │
+│  6. Lot details query                                       │
+│  7. Commitment calculation                                  │
+│  8. Pending transactions list                               │
+│  9. Parameter checks (x2)                                   │
+│  10. Lot details query (AGAIN)                              │
+│  11. Commitment calculation (AGAIN)                         │
+│  12. Pending transactions (AGAIN)                           │
+├─────────────────────────────────────────────────────────────┤
+│  PHASE 3: Connection Reset (NEW)                            │
+├─────────────────────────────────────────────────────────────┤
+│  exec sp_reset_connection                                   │
+├─────────────────────────────────────────────────────────────┤
+│  PHASE 4: Pre-Commit Validation (3rd repetition!)           │
+├─────────────────────────────────────────────────────────────┤
+│  13. Parameter checks                                       │
+│  14. Lot details query (3rd time!)                          │
+│  15. Commitment calculation (3rd time!)                     │
+│  16. Manufacturing switches (multiple)                      │
+│  17. DistributionParameter checks                           │
+│  18. Indian accounting check                                │
+│  [LOG CUTS OFF - INSERTs happen here]                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Critical Performance Issues Identified
+
+| Issue | Evidence | Impact |
+|-------|----------|--------|
+| **Triple Validation** | Same queries run 3 times | 3x database load |
+| **No Query Caching** | Commitment calc repeated | Redundant processing |
+| **Connection Churn** | sp_reset_connection mid-flow | Transaction overhead |
+| **Bloated Switch Logic** | 20+ CustomLogicSwitch queries | Unnecessary checks |
+| **Log Truncation** | INSERTs not in trace | Indicates timeout/disconnect? |
+
+### Why "WITH Commit" is Slower
+
+1. **Container Support**: Additional ContainerMaster join
+2. **UOM Validation**: Extra conversion lookups
+3. **Connection Reset**: Pool recycling overhead
+4. **Triple Validation**: Redundant query execution
+5. **Heavy Switch Logic**: Manufacturing module checks
+
+### Recommendations for New System
+
+| Legacy Pattern | Problem | New Approach |
+|----------------|---------|--------------|
+| Triple validation | Wastes resources | Single validation, cache results |
+| Container query always | Not all items use containers | Conditional query based on item type |
+| UOM check per transfer | KG to KG is no-op | Skip conversion when From=To |
+| sp_reset_connection | Unnecessary overhead | Single connection, proper transaction scope |
+| Manufacturing switches | Putaway doesn't need mfg logic | Remove irrelevant checks |
+
+---
+
+## Appendix D: Pattern Comparison Summary
+
+| Scenario | Qty | Container | UOM | Connection Reset | Validation Rounds | Performance |
+|----------|-----|-----------|-----|------------------|-------------------|-------------|
+| Simple Transfer | 500 | ❌ | ❌ | ❌ | 1 | ✅ Fast |
+| Complex Transfer | 3100 | ✅ | ✅ | ✅ | 3 | ⚠️ Slow |
+
+### Decision Matrix for New Implementation
+
+```
+IF item.HasContainerTracking THEN
+    Include ContainerMaster join
+ELSE
+    Skip container query
+
+IF sourceUOM != destUOM THEN
+    Perform INQTYCNV lookup
+ELSE
+    Skip conversion (use 1.0 factor)
+
+IF firstValidationPassed THEN
+    Cache results
+    Use cached results for commit phase
+ELSE
+    Fail fast (don't proceed)
+```
+
+---
+
 *Documented by Gale Oracle for Putaway Bin Transfer System*
-*Source: SQL trace from legacy BME Putaway system (2026-02-16)*
+*Source: SQL traces from legacy BME Putaway system (2026-02-16)*
 *Database Verification: 2026-02-16*
