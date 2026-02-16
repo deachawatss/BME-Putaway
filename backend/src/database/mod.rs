@@ -1,3 +1,4 @@
+use crate::constants;
 use anyhow::{Context, Result};
 use bb8::Pool;
 use bb8_tiberius::ConnectionManager;
@@ -8,9 +9,6 @@ use tracing::{info, warn};
 
 pub mod putaway;
 pub mod putaway_db;
-
-// Default warehouse location key
-pub const DEFAULT_LOCATION_KEY: &str = "TFC1";
 
 /// Database configuration with connection pooling
 #[derive(Clone, Debug)]
@@ -87,9 +85,9 @@ impl Database {
         let password = env::var("DATABASE_PASSWORD")
             .with_context(|| "Missing environment variable: DATABASE_PASSWORD")?;
         let port = env::var("DATABASE_PORT")
-            .unwrap_or_else(|_| "49381".to_string())
+            .unwrap_or_else(|_| constants::DEFAULT_DATABASE_PORT.to_string())
             .parse()
-            .unwrap_or(49381);
+            .unwrap_or(constants::DEFAULT_DATABASE_PORT);
 
         Ok(DatabaseConfig {
             server,

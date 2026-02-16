@@ -3,7 +3,7 @@ use axum::{
     http::{header, Method, StatusCode, HeaderMap},
     middleware::from_fn_with_state,
     response::{Html, IntoResponse, Json},
-    routing::{get, post, put},
+    routing::{get, post},
     Router,
 };
 use ldap3::{LdapConnAsync, LdapConnSettings, Scope, SearchEntry};
@@ -657,24 +657,23 @@ async fn main() {
     dotenv::dotenv().ok();
 
     // Server configuration
-    let host = std::env::var("SERVER_HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
-    // PUTAWAY: Default port changed from 4400 to 4402
+    let host = std::env::var("SERVER_HOST").unwrap_or_else(|_| constants::DEFAULT_SERVER_HOST.to_string());
     let port = std::env::var("SERVER_PORT")
-        .unwrap_or_else(|_| "4402".to_string())
+        .unwrap_or_else(|_| constants::DEFAULT_SERVER_PORT.to_string())
         .parse::<u16>()
-        .unwrap_or(4402);
+        .unwrap_or(constants::DEFAULT_SERVER_PORT);
 
     // CORS configuration
-    let cors_origins = std::env::var("CORS_ORIGINS").unwrap_or_else(|_| "*".to_string());
+    let cors_origins = std::env::var("CORS_ORIGINS").unwrap_or_else(|_| constants::DEFAULT_CORS_ORIGINS.to_string());
 
     info!("Server configured to run on {}:{}", host, port);
     info!("CORS origins: {}", cors_origins);
 
     // LDAP configuration
-    // Default to LDAPS (port 636) with skip_verify for internal networks
+    // Default to LDAPS with skip_verify for internal networks
     // Most corporate LDAP servers use self-signed certificates
-    let ldap_url = std::env::var("LDAP_URL")
-        .unwrap_or_else(|_| "ldaps://192.168.0.1:636".to_string());
+    let default_ldap_url = format!("ldaps://192.168.0.1:{}", constants::DEFAULT_LDAP_PORT);
+    let ldap_url = std::env::var("LDAP_URL").unwrap_or_else(|_| default_ldap_url);
     let use_ssl = std::env::var("LDAP_USE_SSL")
         .unwrap_or_else(|_| "true".to_string())  // Default to SSL enabled
         .parse()

@@ -14,32 +14,6 @@ pub fn bangkok_now_rfc3339() -> String {
     bangkok_now().to_rfc3339()
 }
 
-/// Convert UTC datetime to Bangkok timezone
-#[allow(dead_code)]
-pub fn utc_to_bangkok(utc_time: DateTime<Utc>) -> DateTime<Tz> {
-    utc_time.with_timezone(&BANGKOK_TZ)
-}
-
-/// Convert UTC datetime to UTC (for database compatibility)
-pub fn convert_to_utc(utc_time: DateTime<Utc>) -> DateTime<Utc> {
-    utc_time
-}
-
-/// Get current Bangkok time
-pub fn get_bangkok_time() -> DateTime<Tz> {
-    bangkok_now()
-}
-
-/// Format Bangkok datetime for form display (YYYY-MM-DD)
-pub fn format_bangkok_date(bangkok_time: DateTime<Tz>) -> String {
-    bangkok_time.format("%Y-%m-%d").to_string()
-}
-
-/// Get current Bangkok time formatted for SQL Server datetime
-pub fn bangkok_now_sql_server() -> String {
-    bangkok_now().format("%Y-%m-%d %H:%M:%S%.3f").to_string()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
